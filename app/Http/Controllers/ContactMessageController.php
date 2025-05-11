@@ -45,8 +45,9 @@ class ContactMessageController extends Controller
             $validated = $request->validate([
                 'first_name'   => 'required|string|max:255',
                 'last_name'    => 'required|string|max:255',
+                // 'email'        => 'required|email|phone:*',
                 'email'        => 'required|email',
-                'phone'        => 'required|string|max:20|phone:*',
+                'phone'        => 'required|string|max:20',
                 'organization' => 'nullable|string|max:255',
                 'city'         => 'nullable|string|max:255',
                 'help'         => 'nullable|string',

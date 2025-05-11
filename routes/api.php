@@ -56,28 +56,37 @@ Route::middleware('auth:api')->group(function () {
 
 //seo
 Route::middleware('auth:api')->group(function () {
-    Route::get('/seo/{slug}', [SeoController::class, 'show']);
+    
     Route::post('/seo', [SeoController::class, 'storeOrUpdate']);
 });
+
+Route::get('/seo/{slug}', [SeoController::class, 'show']);
 
 
 //package info bronze 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/packageinfo/bronze', [PackageController::class, 'BronzeShow']);
+    
     Route::post('/packageinfo/bronze', [PackageController::class, 'storeOrUpdateBronze']);
 });
 
+
+Route::get('/packageinfo/bronze', [PackageController::class, 'BronzeShow']);
+
 //package info silver
 Route::middleware('auth:api')->group(function () {
-    Route::get('/packageinfo/silver', [PackageController::class, 'SilverShow']);
-    Route::post('/packageinfo/silver', [PackageController::class, 'storeOrUpdateBronze']);
+    
+    Route::post('/packageinfo/silver', [PackageController::class, 'storeOrUpdateSilver']);
 });
+
+Route::get('/packageinfo/silver', [PackageController::class, 'SilverShow']);
 
 //package info gold
 Route::middleware('auth:api')->group(function () {
-    Route::get('/packageinfo/gold', [PackageController::class, 'goldShow']);
+    
     Route::post('/packageinfo/gold', [PackageController::class, 'storeOrUpdateGold']);
 });
+
+Route::get('/packageinfo/gold', [PackageController::class, 'goldShow']);
 
 
 Route::post('/package-order/{slug}', [PackageOrderController::class, 'store']);

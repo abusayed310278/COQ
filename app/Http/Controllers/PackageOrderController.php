@@ -15,7 +15,8 @@ class PackageOrderController extends Controller
             $validated = $request->validate([
                 'company_name' => 'required|string|max:255',
                 'email'        => 'required|email|max:255',
-                'phone'        => 'required|string|max:20|phone:*',
+                // 'phone'        => 'required|string|max:20|phone:*',
+                'phone'        => 'required|string|max:20',
                 'postal_code'  => 'required|string|max:20',
                 'address'      => 'required|string',
                 'location'     => 'required|string|max:255',
