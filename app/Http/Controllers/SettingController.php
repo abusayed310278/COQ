@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
@@ -40,7 +44,7 @@ class SettingController extends Controller
                 'icon'          => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
                 'system_name'   => 'nullable|string|max:255',
                 'system_title'  => 'nullable|string',
-                'system_address'=> 'nullable|string',
+                'system_address' => 'nullable|string',
                 'email'         => 'nullable|email|max:255',
                 'phone'         => 'nullable|string|max:20',
                 'opening_hour'  => 'nullable|string|max:100',
@@ -59,7 +63,7 @@ class SettingController extends Controller
             $data = [
                 'system_name'   => $validated['system_name'] ?? null,
                 'system_title'  => $validated['system_title'] ?? null,
-                'system_address'=> $validated['system_address'] ?? null,
+                'system_address' => $validated['system_address'] ?? null,
                 'email'         => $validated['email'] ?? null,
                 'phone'         => $validated['phone'] ?? null,
                 'opening_hour'  => $validated['opening_hour'] ?? null,
@@ -91,48 +95,87 @@ class SettingController extends Controller
         }
     }
 
-   use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
-use Exception;
 
-public function updateEmail(Request $request)
-{
-    try {
-        // Validate the new email
-        $validated = $request->validate([
-            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
-        ]);
 
-        $user = Auth::user();
 
-        if ($user) {
-            $user->update(['email' => $validated['email']]);
+
+    public function updateEmail(Request $request)
+    {
+        try {
+            // Validate new email (must be unique except current user's email)
+            $validated = $request->validate([
+                'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+            ]);
+
+            // Get authenticated user
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated.'
+                ], 401);
+            }
+
+            // Update email
+            $user->email = $validated['email'];
+            if (method_exists($user, 'save')) {
+                $user->save();
+            } else {
+                // If $user is not an Eloquent model, update via query builder
+                DB::table('users')->where('id', $user->id)->update(['email' => $validated['email']]);
+            }
 
             return response()->json([
                 'success' => true,
                 'message' => 'Email updated successfully.',
                 'data'    => $user
             ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating user email: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update email.',
+                'error'   => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'User not found.'
-        ], 404);
-
-    } catch (Exception $e) {
-        Log::error('Error updating user email: ' . $e->getMessage());
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to update email.',
-            'error'   => $e->getMessage()
-        ], 500);
     }
-}
 
 
 
 
+    public function updatePassword(Request $request)
+    {
+        // return 'ok'
+        try {
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|string|min:6',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed.',
+                    'errors' => $validator->errors(),
+                ], 400);
+            }
+
+            $user = Auth::user();
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully.',
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('Error updating password: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update password.',
+            ], 500);
+        }
+    }
 }
