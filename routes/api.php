@@ -109,8 +109,8 @@ Route::middleware('auth:api')->group(function () {
 
 //settings(backend) which is namely settings
 Route::middleware('auth:api')->group(function () {
-    Route::post('/newSettings/email', [SettingController::class, 'updateEmail']);
-    Route::post('/newSettings/password', [SettingController::class, 'updatePassword']);
+    Route::post('newSettings/email', [SettingController::class, 'updateEmail']);
+    Route::post('newSettings/password', [SettingController::class, 'updatePassword']);
 });
 
 //blogs (backend) which is namely blogs
