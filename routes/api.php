@@ -105,6 +105,14 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/package-order-shows', [PackageOrderController::class, 'allShow']);
 });
 
+
+
+//settings(backend) which is namely settings
+Route::middleware('auth:api')->group(function () {
+    Route::post('/newSettings/email', [SettingController::class, 'updateEmail']);
+    Route::post('/newSettings/password', [SettingController::class, 'updatePassword']);
+});
+
 //blogs (backend) which is namely blogs
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('blog', BlogController::class);

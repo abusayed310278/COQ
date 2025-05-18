@@ -90,4 +90,49 @@ class SettingController extends Controller
             ], 500);
         }
     }
+
+   use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use Exception;
+
+public function updateEmail(Request $request)
+{
+    try {
+        // Validate the new email
+        $validated = $request->validate([
+            'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+        ]);
+
+        $user = Auth::user();
+
+        if ($user) {
+            $user->update(['email' => $validated['email']]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email updated successfully.',
+                'data'    => $user
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'User not found.'
+        ], 404);
+
+    } catch (Exception $e) {
+        Log::error('Error updating user email: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to update email.',
+            'error'   => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+
+
 }
