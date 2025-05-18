@@ -19,6 +19,8 @@ return new class extends Migration
             $table->longText('details');       // Details or content of the post
             $table->longText('tags')->nullable(); // Tags associated with the post
             $table->longText('keyword')->nullable(); // Keywords for SEO
+            $table->longText('meta_description')->nullable(); // Meta description for SEO
+            $table->longText('meta_title')->nullable(); // Meta title for SEO
             $table->boolean('publish')->default(false);
             $table->timestamps();
         });

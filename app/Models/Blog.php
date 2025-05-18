@@ -10,11 +10,13 @@ class Blog extends Model
     use HasFactory;
     protected $fillable = [
         'title',
-        'slug',    
+        'slug',
         'image',
         'details',
         'tags',
         'keyword',
+        'meta_description',
+        'meta_title',
         'publish',
     ];
 }

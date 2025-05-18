@@ -53,14 +53,13 @@ class PackageOrderController extends Controller
         ]);
     }
 
-    public function goldAllShow()
+    public function allShow()
     {
-        $goldOrders = PackageOrder::where('package_name', 'gold')
-            ->latest()
+        $orders = PackageOrder::latest()
             ->take(10)
-            ->get(['package_name','email', 'company_name', 'location', 'created_at']);
+            ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
 
-        $goldOrders->transform(function ($order) {
+        $orders->transform(function ($order) {
             return [
                 'package_name' => $order->package_name,
                 'company_name' => $order->company_name,
@@ -72,9 +71,10 @@ class PackageOrderController extends Controller
 
         return response()->json([
             'success' => true,
-            'goldOrders' => $goldOrders,
+            'orders' => $orders,
         ]);
     }
+
 
     public function silverAllShow()
     {
@@ -100,26 +100,25 @@ class PackageOrderController extends Controller
     }
 
     public function bronzeAllShow()
-{
-    $bronzeOrders = PackageOrder::where('package_name', 'bronze')
-        ->latest()
-        ->take(10)
-        ->get(['package_name','email', 'company_name', 'location', 'created_at']);
+    {
+        $bronzeOrders = PackageOrder::where('package_name', 'bronze')
+            ->latest()
+            ->take(10)
+            ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
 
-    $bronzeOrders->transform(function ($order) {
-        return [
-            'package_name' => $order->package_name,
-            'email'        => $order->email,
-            'company_name' => $order->company_name,
-            'location'     => $order->location,
-            'created_at'   => $order->created_at->format('d/m/Y'),
-        ];
-    });
+        $bronzeOrders->transform(function ($order) {
+            return [
+                'package_name' => $order->package_name,
+                'email'        => $order->email,
+                'company_name' => $order->company_name,
+                'location'     => $order->location,
+                'created_at'   => $order->created_at->format('d/m/Y'),
+            ];
+        });
 
-    return response()->json([
-        'success' => true,
-        'bronzeOrders' => $bronzeOrders,
-    ]);
-}
-
+        return response()->json([
+            'success' => true,
+            'bronzeOrders' => $bronzeOrders,
+        ]);
+    }
 }
