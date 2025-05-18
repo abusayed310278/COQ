@@ -171,18 +171,9 @@ class BlogController extends Controller
                 'publish'          => 'sometimes|boolean',
             ]);
 
-            // If title is present, regenerate slug
+            // Always update slug based on new title, without suffix
             if (!empty($validated['title'])) {
-                $slug = Str::slug($validated['title']);
-
-                // Ensure unique slug
-                $originalSlug = $slug;
-                $count = 1;
-                while (Blog::where('slug', $slug)->where('id', '!=', $id)->exists()) {
-                    $slug = $originalSlug . '-' . $count++;
-                }
-
-                $validated['slug'] = $slug;
+                $validated['slug'] = Str::slug($validated['title']);
             }
 
             // Handle image upload
@@ -196,7 +187,7 @@ class BlogController extends Controller
             // Update blog
             $blog->update($validated);
 
-            // Attach full image URL for response
+            // Format image URL for response
             $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
 
             return response()->json([
