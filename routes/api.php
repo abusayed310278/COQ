@@ -107,9 +107,13 @@ Route::middleware('auth:api')->group(function () {
 
 //blogs (backend) which is namely blogs
 Route::middleware('auth:api')->group(function () {
-    Route::apiResource('blog', BlogController::class);
+    Route::apiResource('blogs', BlogController::class);
 });
 Route::get('/blog-data-front', [BlogController::class, 'getBlogData']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::put('/blogsupdate/{id}', [BlogController::class, 'updates']);
+});
 
 
 
