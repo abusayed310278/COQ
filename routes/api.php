@@ -11,6 +11,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +116,9 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/blogsupdate/{id}', [BlogController::class, 'updates']);
 });
 
+
+
+Route::get('/google-reviews', [GoogleReviewController::class, 'fetch']);
 
 
 
