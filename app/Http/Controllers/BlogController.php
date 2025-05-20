@@ -9,18 +9,46 @@ use Illuminate\Support\Str;
 class BlogController extends Controller
 {
     // GET /api/blogs
-    public function index()
+    // public function index()
+    // {
+    //     try {
+    //         $blogs = Blog::latest()->paginate(10);
+
+    //         // Map over each blog to convert image path to full URL
+    //         $blogs->getCollection()->transform(function ($blog) {
+    //             $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
+    //             return $blog;
+    //         });
+
+    //         return response()->json(['success' => true, 'data' => $blogs]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to fetch blogs',
+    //             'error'   => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    public function index(Request $request)
     {
         try {
-            $blogs = Blog::latest()->paginate(10);
+            $query = Blog::query();
 
-            // Map over each blog to convert image path to full URL
-            $blogs->getCollection()->transform(function ($blog) {
-                $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
-                return $blog;
-            });
+            // If "search" query param is present, filter by title
+            if ($request->has('search') && $request->search !== '') {
+                $searchTerm = $request->search;
+                $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+            }
 
-            return response()->json(['success' => true, 'data' => $blogs]);
+            $blogs = $query->latest()->paginate(10);
+
+            
+
+            return response()->json([
+                'success' => true,
+                'data'    => $blogs
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -31,9 +59,11 @@ class BlogController extends Controller
     }
 
 
+
     // GET /api/blogs/{id}
     public function show($id)
     {
+
         try {
             $blog = Blog::findOrFail($id);
             return response()->json(['success' => true, 'data' => $blog]);
@@ -60,13 +90,8 @@ class BlogController extends Controller
                 'publish'          => 'nullable|boolean',
             ]);
 
-            // Generate unique slug from title
+            // Generate slug directly from title without uniqueness check
             $slug = Str::slug($validated['title']);
-            $originalSlug = $slug;
-            $count = 1;
-            while (Blog::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count++;
-            }
 
             // Handle image upload
             $imageName = null;
@@ -109,57 +134,14 @@ class BlogController extends Controller
 
 
     // PUT /api/blogs/{id}
-    // public function update(Request $request, $id)
-    // {
-    //     try {
-    //         $blog = Blog::findOrFail($id);
-
-    //         $validated = $request->validate([
-    //             'title'    => 'sometimes|required|string',
-    //             'slug'     => 'sometimes|required|string|max:255|unique:blogs,slug,' . $id,
-    //             'image'    => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
-    //             'details'  => 'sometimes|required|string',
-    //             'tags'     => 'nullable|string',
-    //             'keyword'  => 'nullable|string',
-    //             'publish'  => 'sometimes|boolean',
-    //         ]);
-
-    //         if ($request->hasFile('image')) {
-    //             $file = $request->file('image');
-    //             $imageName = time() . '_blog_image.' . $file->getClientOriginalExtension();
-    //             $file->move(public_path('uploads/Blogs'), $imageName);
-    //             $validated['image'] = $imageName;
-    //         }
-
-    //         $blog->update($validated);
-
-    //         // Convert image filename to full URL
-    //         $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Blog updated successfully',
-    //             'data'    => $blog
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Failed to update blog',
-    //             'error'   => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-
-
-    // PUT /api/blogs/{id}
 
     public function update(Request $request, $id)
     {
+        // return "hi";
         try {
             $blog = Blog::findOrFail($id);
 
-            // Validate request input
+            // Validate input
             $validated = $request->validate([
                 'title'            => 'sometimes|required|string|max:255',
                 'image'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
@@ -171,12 +153,16 @@ class BlogController extends Controller
                 'publish'          => 'sometimes|boolean',
             ]);
 
+<<<<<<< HEAD
             // Always update slug based on new title, without suffix
+=======
+            // Regenerate slug exactly from title if title is provided
+>>>>>>> b1249ec2cfaa462050dc36878cb98e5f6bf2db92
             if (!empty($validated['title'])) {
                 $validated['slug'] = Str::slug($validated['title']);
             }
 
-            // Handle image upload
+            // Handle image upload if present
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $imageName = time() . '_blog_image.' . $file->getClientOriginalExtension();
@@ -184,7 +170,7 @@ class BlogController extends Controller
                 $validated['image'] = $imageName;
             }
 
-            // Update blog
+            // Update the blog record
             $blog->update($validated);
 
             // Format image URL for response
@@ -193,7 +179,7 @@ class BlogController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Blog updated successfully',
-                'data'    => $blog
+                'data'    => $blog,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -203,11 +189,6 @@ class BlogController extends Controller
             ], 500);
         }
     }
-
-
-
-
-
 
 
 
@@ -243,6 +224,57 @@ class BlogController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch blog data',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function updates(Request $request, $id)
+    {
+        // return response()->json($request->all()); 
+        try {
+            $blog = Blog::findOrFail($id);
+
+            // Validate input
+            $validated = $request->validate([
+                'title'            => 'string|max:255',
+                'image'            => 'nullable',
+                'details'          => 'string',
+                'tags'             => 'nullable|string',
+                'keyword'          => 'nullable|string',
+                'meta_title'       => 'nullable|string|max:255',
+                'meta_description' => 'nullable|string|max:500',
+                'slug' => 'nullable|string|max:500',
+                'publish'          => 'boolean',
+            ]);
+
+            // Regenerate slug exactly from title if title is provided
+            // if (!empty($validated['title'])) {
+            //     $validated['slug'] = Str::slug($validated['title']);
+            // }
+
+            // Handle image upload if present
+            // if ($request->hasFile('image')) {
+            //     $file = $request->file('image');
+            //     $imageName = time() . '_blog_image.' . $file->getClientOriginalExtension();
+            //     $file->move(public_path('uploads/Blogs'), $imageName);
+            //     $validated['image'] = $imageName;
+            // }
+
+            // Update the blog record
+            $blog->update($validated);
+
+            // Attach full image URL for response
+            // $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Blog updated successfully',
+                'data'    => $blog,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update blog',
                 'error'   => $e->getMessage()
             ], 500);
         }

@@ -11,6 +11,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,10 +116,17 @@ Route::middleware('auth:api')->group(function () {
 
 //blogs (backend) which is namely blogs
 Route::middleware('auth:api')->group(function () {
-    Route::apiResource('blog', BlogController::class);
+    Route::apiResource('blogs', BlogController::class);
 });
 Route::get('/blog-data-front', [BlogController::class, 'getBlogData']);
 
+Route::middleware('auth:api')->group(function () {
+    Route::put('/blogsupdate/{id}', [BlogController::class, 'updates']);
+});
+
+
+
+Route::get('/google-reviews', [GoogleReviewController::class, 'fetch']);
 
 
 
