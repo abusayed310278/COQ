@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Services\GoogleService;
 use Illuminate\Support\Facades\Http;
 
 class GoogleReviewController extends Controller
 {
-    public function fetch()
+    public function getGoogleReviews()
     {
-        $placeId = 'ChIJY69GG3yKdkgRdOxtgXd91fc'; // Replace with actual Google Place ID
-        $apiKey = config('services.google_places.key');
+        $apiKey = env('GOOGLE_MAPS_API_KEY');
+        $placeId = 'ChIJY69GG3yKdkgRdOxtgXd91fc';
+        $url = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=name,rating,reviews&key=$apiKey";
 
-        $response = Http::get('https://maps.googleapis.com/maps/api/place/details/json', [
-            'place_id' => $placeId,
-            'fields' => 'rating,reviews,user_ratings_total',
-            'key' => $apiKey,
-        ]);
-
+        $response = Http::get($url);
         return $response->json();
     }
 }
