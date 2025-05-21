@@ -126,7 +126,7 @@ Route::middleware('auth:api')->group(function () {
 
 
 
-Route::get('/google-reviews', [GoogleReviewController::class, 'fetch']);
+Route::get('/google-reviews', [GoogleReviewController::class, 'getGoogleReviews']);
 
 
 
