@@ -103,8 +103,8 @@ Route::post('/contactMessage', [ContactMessageController::class, 'store']);
 
 //packages(backend) which is namely Booking
 Route::middleware('auth:api')->group(function () {
-    Route::get('/package-order-shows', [PackageOrderController::class, 'allShow']);
 });
+Route::get('/package-order-shows', [PackageOrderController::class, 'allShow']);
 
 //blogs (backend) which is namely blogs
 Route::middleware('auth:api')->group(function () {
