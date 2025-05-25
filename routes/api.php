@@ -41,7 +41,7 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api')
 
 
 Route::post('password/email', [AuthController::class, 'sendResetEmailLink']);
-Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.reset');
 
 
 
