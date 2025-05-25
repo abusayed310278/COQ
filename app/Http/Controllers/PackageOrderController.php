@@ -53,27 +53,78 @@ class PackageOrderController extends Controller
         ]);
     }
 
+    // public function allShow()
+    // {
+    //     $orders = PackageOrder::latest()
+    //         ->take(10)
+    //         ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
+
+    //     $orders->transform(function ($order) {
+    //         return [
+    //             'package_name' => $order->package_name,
+    //             'company_name' => $order->company_name,
+    //             'email'        => $order->email,
+    //             'location'     => $order->location,
+    //             'created_at'   => $order->created_at->format('d/m/Y'),
+    //         ];
+    //     });
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'orders' => $orders,
+    //     ]);
+    // }
+
+    // public function allShow()
+    // {
+
+
+    //     $orders = PackageOrder::latest()
+    //         ->take(10)
+    //         ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
+
+    //     $orders->transform(function ($order) {
+    //         return [
+    //             'package_name' => $order->package_name,
+    //             'company_name' => $order->company_name,
+    //             'email'        => $order->email,
+    //             'location'     => $order->location,
+    //             'created_at'   => $order->created_at->format('d/m/Y'),
+    //         ];
+    //     });
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'orders' => $orders,
+    //     ]);
+    // }
+
     public function allShow()
     {
-        $orders = PackageOrder::latest()
-            ->take(10)
-            ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
+        try {
+            $orders = PackageOrder::latest()
+                ->select(['package_name', 'email', 'company_name', 'location', 'created_at'])
+                ->paginate(10); // Use pagination instead of take + get
 
-        $orders->transform(function ($order) {
-            return [
-                'package_name' => $order->package_name,
-                'company_name' => $order->company_name,
-                'email'        => $order->email,
-                'location'     => $order->location,
-                'created_at'   => $order->created_at->format('d/m/Y'),
-            ];
-        });
+            
 
-        return response()->json([
-            'success' => true,
-            'orders' => $orders,
-        ]);
+            return response()->json([
+                'success' => true,
+                'orders'  => $orders,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch orders',
+            ], 500);
+        }
     }
+
+
+
+
+
+
 
 
     public function silverAllShow()
