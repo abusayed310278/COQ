@@ -127,11 +127,8 @@ class BlogController extends Controller
                 'publish'          => 'sometimes|boolean',
             ]);
 
-<<<<<<< HEAD
-            // Always update slug based on new title, without suffix
-=======
-            // Regenerate slug exactly from title if title is provided
->>>>>>> b1249ec2cfaa462050dc36878cb98e5f6bf2db92
+
+
             if (!empty($validated['title'])) {
                 $validated['slug'] = Str::slug($validated['title']);
             }
