@@ -8,55 +8,7 @@ use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    // GET /api/blogs
-    // public function index()
-    // {
-    //     try {
-    //         $blogs = Blog::latest()->paginate(10);
-
-    //         // Map over each blog to convert image path to full URL
-    //         $blogs->getCollection()->transform(function ($blog) {
-    //             $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
-    //             return $blog;
-    //         });
-
-    //         return response()->json(['success' => true, 'data' => $blogs]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Failed to fetch blogs',
-    //             'error'   => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    // public function index(Request $request)
-    // {
-    //     try {
-    //         $query = Blog::query();
-
-    //         // If "search" query param is present, filter by title
-    //         if ($request->has('search') && $request->search !== '') {
-    //             $searchTerm = $request->search;
-    //             $query->where('title', 'LIKE', '%' . $searchTerm . '%');
-    //         }
-
-    //         $blogs = $query->latest()->paginate(10);
-
-
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'data'    => $blogs
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Failed to fetch blogs',
-    //             'error'   => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
+    
 
     public function index(Request $request)
     {
