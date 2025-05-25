@@ -58,7 +58,7 @@ class PackageOrderController extends Controller
     public function allShow()
     {
 
-        return 'ok';
+        // return 'ok';
         
         if (!Auth::check()) {
             return response()->json([
