@@ -43,25 +43,7 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api')
 Route::post('password/email', [AuthController::class, 'sendResetEmailLink']);
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.reset');
 
-// //profile updated from backend
-// Route::middleware('auth:api')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'show']);
-//     Route::post('/profile', [ProfileController::class, 'storeOrUpdate']);
-// });
 
-// //settings
-// Route::middleware('auth:api')->group(function () {
-//     Route::get('/settings', [SettingController::class, 'show']);
-//     Route::post('/settings', [SettingController::class, 'storeOrUpdate']);
-// });
-
-// //seo
-// Route::middleware('auth:api')->group(function () {
-    
-//     Route::post('/seo', [SeoController::class, 'storeOrUpdate']);
-// });
-
-// Route::get('/seo/{slug}', [SeoController::class, 'show']);
 
 
 //package info bronze(backend) which is namely packages
@@ -102,9 +84,9 @@ Route::post('/contactMessage', [ContactMessageController::class, 'store']);
 
 
 //packages(backend) which is namely Booking
-Route::middleware('auth:api')->group(function () {
-    Route::get('/package-order-shows', [PackageOrderController::class, 'allShow']);
-});
+// Route::middleware('auth:api')->group(function () {
+// });
+Route::get('/package-order-shows', [PackageOrderController::class, 'allShow']);
 
 
 

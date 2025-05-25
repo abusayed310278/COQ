@@ -8,6 +8,7 @@ use App\Models\PackageSilver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class PackageController extends Controller
 {
@@ -37,6 +38,12 @@ class PackageController extends Controller
 
     public function storeOrUpdateBronze(Request $request)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login first.'
+            ], 401);
+        }
         try {
             $validated = $request->validate([
                 'image'        => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
@@ -238,6 +245,4 @@ class PackageController extends Controller
             ], 500);
         }
     }
-
-
 }
