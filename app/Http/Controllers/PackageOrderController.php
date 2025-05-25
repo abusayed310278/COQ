@@ -63,7 +63,7 @@ class PackageOrderController extends Controller
         if (!Auth::check()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Login first',
+                'message' => 'Please log in to view orders.',
             ], 401);
         }
 
