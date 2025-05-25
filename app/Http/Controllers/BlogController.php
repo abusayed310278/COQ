@@ -30,20 +30,42 @@ class BlogController extends Controller
     //     }
     // }
 
+    // public function index(Request $request)
+    // {
+    //     try {
+    //         $query = Blog::query();
+
+    //         // If "search" query param is present, filter by title
+    //         if ($request->has('search') && $request->search !== '') {
+    //             $searchTerm = $request->search;
+    //             $query->where('title', 'LIKE', '%' . $searchTerm . '%');
+    //         }
+
+    //         $blogs = $query->latest()->paginate(10);
+
+
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'data'    => $blogs
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to fetch blogs',
+    //             'error'   => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
     public function index(Request $request)
     {
         try {
-            $query = Blog::query();
-
-            // If "search" query param is present, filter by title
-            if ($request->has('search') && $request->search !== '') {
-                $searchTerm = $request->search;
-                $query->where('title', 'LIKE', '%' . $searchTerm . '%');
-            }
-
-            $blogs = $query->latest()->paginate(10);
-
-            
+            $blogs = Blog::when($request->search, function ($query, $search) {
+                return $query->where('title', 'like', "%{$search}%");
+            })
+                ->latest()
+                ->paginate(10);
 
             return response()->json([
                 'success' => true,
@@ -53,10 +75,10 @@ class BlogController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch blogs',
-                'error'   => $e->getMessage()
             ], 500);
         }
     }
+
 
 
 
