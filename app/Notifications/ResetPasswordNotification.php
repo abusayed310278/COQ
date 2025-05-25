@@ -35,12 +35,15 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $ur = env('APP_FRONTEND_URL').'/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
-        $urll = str_replace('http://', 'http://', $ur);
+        // $ur = env('APP_FRONTEND_URL').'/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
+            // $url ='http://localhost:3000' . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
+        // $url = str_replace('http://', 'http://', $url);
+
+        $url = 'http://localhost:3000/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
 
         return (new MailMessage)
                     ->line('Now You Can Reset Your Password.')
-                    ->action('Reset Password', url($urll))
+                    ->action('Reset Password', $url)
                     ->line('Thank you for using our application!');
     }
 

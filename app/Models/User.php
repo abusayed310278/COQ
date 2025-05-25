@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Notifications\ResetPasswordNotification;
 
 
 class User extends Authenticatable implements JWTSubject
@@ -46,6 +47,8 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
+
+
     // Rest omitted for brevity
 
     /**
@@ -56,6 +59,11 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTIdentifier()
     {
         return $this->getKey();
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /**
