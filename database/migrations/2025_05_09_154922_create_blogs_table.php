@@ -17,8 +17,8 @@ return new class extends Migration
             $table->longText('slug');  // Slug for SEO-friendly URL
             $table->string('image')->nullable(); // Image URL or path
             $table->longText('details');       // Details or content of the post
-            $table->longText('tags')->nullable(); // Tags associated with the post
-            $table->longText('keyword')->nullable(); // Keywords for SEO
+            $table->json('tags')->nullable(); // JSON array for tags
+            $table->json('keyword')->nullable(); // JSON array for keywords
             $table->longText('meta_description')->nullable(); // Meta description for SEO
             $table->longText('meta_title')->nullable(); // Meta title for SEO
             $table->boolean('publish')->default(false);

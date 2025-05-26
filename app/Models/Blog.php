@@ -19,4 +19,10 @@ class Blog extends Model
         'meta_title',
         'publish',
     ];
+
+    protected $casts = [
+        'tags' => 'array',
+        'keyword' => 'array',
+        'publish' => 'boolean',
+    ];
 }
