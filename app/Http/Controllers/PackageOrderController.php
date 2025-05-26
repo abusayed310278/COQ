@@ -54,7 +54,7 @@ class PackageOrderController extends Controller
     public function index()
     {
         $data = PackageOrder::latest()
-            ->where('status', true)           // filter where status is true
+            ->where('status', false)           // filter where status is true
             ->select('package_name', 'email', 'created_at')
             ->get();
 
