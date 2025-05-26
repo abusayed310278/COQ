@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
@@ -42,7 +43,6 @@ class AuthController extends Controller
                 'message' => 'User registered successfully',
                 'data' => $user
             ], 201);
-
         } catch (Exception $e) {
             Log::error('Error registering user: ' . $e->getMessage());
             return response()->json([
@@ -83,7 +83,6 @@ class AuthController extends Controller
                 'message' => 'Login successful',
                 'token' => $token
             ]);
-
         } catch (Exception $e) {
             Log::error('Login error: ' . $e->getMessage());
             return response()->json([
@@ -130,20 +129,32 @@ class AuthController extends Controller
         }
     }
 
-     // Send password reset link to email
-     public function sendResetEmailLink(Request $request)
-     {
-         $request->validate(['email' => 'required|email']);
- 
-         $status = Password::sendResetLink(
-             $request->only('email')
-         );
- 
-         return $status === Password::RESET_LINK_SENT
-             ? response()->json(['success' => true, 'message' => __($status)])
-             : response()->json(['success' => false, 'message' => __($status)], 400);
-     }
+    // Send password reset link to email
+    public function sendResetEmailLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
 
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
 
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['success' => true, 'message' => __($status)])
+            : response()->json(['success' => false, 'message' => __($status)], 400);
+    }
 
+    public function sendEmail()
+    {
+        $user = User::find(1); // fetch user with ID 1
+
+        if ($user) {
+            return response()->json([
+                'email' => $user->email,
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'User not found',
+            ], 404);
+        }
+    }
 }

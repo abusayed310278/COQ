@@ -48,7 +48,7 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 
 //package info bronze(backend) which is namely packages
 Route::middleware('auth:api')->group(function () {
-    
+
     Route::post('/packageinfo/bronze', [PackageController::class, 'storeOrUpdateBronze']);
 });
 
@@ -57,7 +57,7 @@ Route::get('/packageinfo/bronze', [PackageController::class, 'BronzeShow']);
 
 //package info silver(backend) which is namely packages
 Route::middleware('auth:api')->group(function () {
-    
+
     Route::post('/packageinfo/silver', [PackageController::class, 'storeOrUpdateSilver']);
 });
 
@@ -65,7 +65,7 @@ Route::get('/packageinfo/silver', [PackageController::class, 'SilverShow']);
 
 //package info gold(backend) which is namely packages
 Route::middleware('auth:api')->group(function () {
-    
+
     Route::post('/packageinfo/gold', [PackageController::class, 'storeOrUpdateGold']);
 });
 
@@ -96,6 +96,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('newSettings/email', [SettingController::class, 'updateEmail']);
     Route::post('newSettings/password', [SettingController::class, 'updatePassword']);
 });
+
+Route::get('/email', [AuthController::class, 'sendEmail']);
+
 
 //blogs (backend) which is namely blogs
 Route::middleware('auth:api')->group(function () {
