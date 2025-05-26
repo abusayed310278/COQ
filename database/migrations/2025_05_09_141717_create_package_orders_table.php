@@ -20,6 +20,7 @@ return new class extends Migration
             $table->longText('address');
             $table->string('location');
             $table->string('package_name');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }

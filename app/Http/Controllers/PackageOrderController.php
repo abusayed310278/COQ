@@ -21,7 +21,12 @@ class PackageOrderController extends Controller
                 'postal_code'  => 'required|string|max:20',
                 'address'      => 'required|string',
                 'location'     => 'required|string|max:255',
+                'status'       => 'boolean|nullable',
+
             ]);
+
+            // Default status to false if not provided
+            $validated['status'] = $validated['status'] ?? false;
 
             // The slug acts as package_name
             $data = array_merge($validated, ['package_name' => $slug]);
@@ -44,22 +49,28 @@ class PackageOrderController extends Controller
         }
     }
 
+
+
     public function index()
     {
-        
-        $emails = PackageOrder::latest()->pluck('email');
+        $data = PackageOrder::latest()
+            ->where('status', true)           // filter where status is true
+            ->select('package_name', 'email', 'created_at')
+            ->get();
 
         return response()->json([
             'success' => true,
-            'emails'  => $emails
+            'data'    => $data
         ]);
     }
+
+
 
     public function allShow()
     {
 
         // return 'ok';
-        
+
         if (!Auth::check()) {
             return response()->json([
                 'success' => false,
