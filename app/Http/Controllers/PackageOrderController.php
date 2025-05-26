@@ -53,7 +53,7 @@ class PackageOrderController extends Controller
 
     public function index()
     {
-        $data = PackageOrder::select('package_name', 'email', 'created_at')
+        $data = PackageOrder::select('package_name', 'email','status', 'created_at')
             ->where('status', false) // optional: uncomment if needed
             ->orderBy('created_at', 'desc') // ensures latest by created_at
             ->get();
