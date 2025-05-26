@@ -77,6 +77,7 @@ Route::post('/package-order/{slug}', [PackageOrderController::class, 'store']);
 
 //notification get from submitted from package orders which is namely notification in backend
 Route::get('/notification', [PackageOrderController::class, 'index'])->middleware('auth:api');
+Route::put('/notification', [PackageOrderController::class, 'update'])->middleware('auth:api');
 
 
 //contact message get from frontend

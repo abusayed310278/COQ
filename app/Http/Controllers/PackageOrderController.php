@@ -53,9 +53,9 @@ class PackageOrderController extends Controller
 
     public function index()
     {
-        $data = PackageOrder::latest()
-            ->where('status', false)           // filter where status is true
-            ->select('package_name', 'email', 'created_at')
+        $data = PackageOrder::select('package_name', 'email', 'created_at')
+            ->where('status', false) // optional: uncomment if needed
+            ->orderBy('created_at', 'desc') // ensures latest by created_at
             ->get();
 
         return response()->json([
@@ -145,5 +145,33 @@ class PackageOrderController extends Controller
             'success' => true,
             'bronzeOrders' => $bronzeOrders,
         ]);
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'id'     => 'required|exists:package_orders,id',
+                'status' => 'required|boolean',
+            ]);
+
+            $order = PackageOrder::findOrFail($validated['id']);
+            $order->status = $validated['status'];
+            $order->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order status updated successfully.',
+                'data'    => $order
+            ]);
+        } catch (Exception $e) {
+            Log::error('Order status update failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update order status.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 }
