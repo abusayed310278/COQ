@@ -14,7 +14,7 @@ class Blog extends Model
         'image',
         'details',
         'tags',
-        'keyword',
+        'keywords',
         'meta_description',
         'meta_title',
         'publish',
@@ -22,7 +22,7 @@ class Blog extends Model
 
     protected $casts = [
         'tags' => 'array',
-        'keyword' => 'array',
+        'keywords' => 'array',
         'publish' => 'boolean',
     ];
 }

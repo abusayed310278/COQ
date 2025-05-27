@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable(); // Image URL or path
             $table->longText('details');       // Details or content of the post
             $table->json('tags')->nullable(); // JSON array for tags
-            $table->json('keyword')->nullable(); // JSON array for keywords
+            $table->json('keywords')->nullable(); // JSON array for keywords
             $table->longText('meta_description')->nullable(); // Meta description for SEO
             $table->longText('meta_title')->nullable(); // Meta title for SEO
             $table->boolean('publish')->default(false);
