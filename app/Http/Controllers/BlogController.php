@@ -17,7 +17,7 @@ class BlogController extends Controller
                 return $query->where('title', 'like', "%{$search}%");
             })
                 ->latest()
-                ->paginate(10);
+                ->paginate(8);
 
             return response()->json([
                 'success' => true,
@@ -58,7 +58,7 @@ class BlogController extends Controller
                 'image'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
                 'details'          => 'required|string',
                 'tags'             => 'nullable|string',
-                'keywords'          => 'nullable|string',
+                'keyword'          => 'nullable|string',
                 'meta_title'       => 'nullable|string|max:255',
                 'meta_description' => 'nullable|string|max:500',
                 'publish'          => 'nullable|boolean',
@@ -81,13 +81,14 @@ class BlogController extends Controller
                 'image'            => $imageName,
                 'details'          => $validated['details'],
                 'tags'             => $validated['tags'] ?? null,
-                'keywords'          => $validated['keywords'] ?? null,
+                'keyword'          => $validated['keyword'] ?? null,
                 'meta_title'       => $validated['meta_title'] ?? null,
                 'meta_description' => $validated['meta_description'] ?? null,
                 'publish'          => $validated['publish'] ?? false,
             ]);
 
             // Attach full image URL for response
+
             $blog->image = $blog->image ? url('uploads/Blogs/' . $blog->image) : null;
 
             return response()->json([
@@ -112,6 +113,7 @@ class BlogController extends Controller
     public function update(Request $request, $id)
     {
         // return "hi";
+
         try {
             $blog = Blog::findOrFail($id);
 
@@ -121,7 +123,7 @@ class BlogController extends Controller
                 'image'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
                 'details'          => 'sometimes|required|string',
                 'tags'             => 'nullable|string',
-                'keywords'          => 'nullable|string',
+                'keyword'          => 'nullable|string',
                 'meta_title'       => 'nullable|string|max:255',
                 'meta_description' => 'nullable|string|max:500',
                 'publish'          => 'sometimes|boolean',
