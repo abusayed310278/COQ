@@ -26,8 +26,11 @@ class BlogController extends Controller
                 ->paginate(8);
 
             return response()->json([
-                'success' => true,
-                'data'    => $blogs
+                'success'      => true,
+                'current_page' => $blogs->currentPage(), // ✅ current page number
+                'per_page'     => $blogs->perPage(),     // ✅ blogs per page (should be 8)
+                'data'         => $blogs->items(),       // 👈 Only return the actual blogs, not metadata
+                'total'        => $blogs->total(),       // Optional: total number of blogs
             ]);
         } catch (\Exception $e) {
             return response()->json([
