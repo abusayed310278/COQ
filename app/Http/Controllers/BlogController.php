@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    
+
 
     public function index(Request $request)
     {
@@ -16,6 +16,12 @@ class BlogController extends Controller
             $blogs = Blog::when($request->search, function ($query, $search) {
                 return $query->where('title', 'like', "%{$search}%");
             })
+                ->when($request->status !== null, function ($query) use ($request) {
+                    return $query->where('status', $request->status); // expects true/false or 1/0
+                })
+                ->when($request->date, function ($query, $date) {
+                    return $query->whereDate('created_at', $date); // expects Y-m-d
+                })
                 ->latest()
                 ->paginate(8);
 
