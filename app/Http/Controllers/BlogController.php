@@ -133,7 +133,7 @@ class BlogController extends Controller
                 'image'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:10240',
                 'details'          => 'sometimes|required|string',
                 'tags'             => 'nullable|string',
-                'keyword'          => 'nullable|string',
+                'keywords'          => 'nullable|string',
                 'meta_title'       => 'nullable|string|max:255',
                 'meta_description' => 'nullable|string|max:500',
                 'publish'          => 'sometimes|boolean',
