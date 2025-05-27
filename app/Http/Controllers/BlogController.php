@@ -17,7 +17,7 @@ class BlogController extends Controller
                 return $query->where('title', 'like', "%{$search}%");
             })
                 ->when($request->publish !== null, function ($query) use ($request) {
-                    return $query->where('publish', (bool)$request->status); // expects true/false or 1/0
+                    return $query->where('publish', $request->status); // expects true/false or 1/0
                 })
                 ->when($request->date, function ($query, $date) {
                     return $query->whereDate('created_at', $date); // expects Y-m-d
@@ -30,7 +30,8 @@ class BlogController extends Controller
                 'current_page' => $blogs->currentPage(), // ✅ current page number
                 'per_page'     => $blogs->perPage(),     // ✅ blogs per page (should be 8)
                 'data'         => $blogs->items(),       // 👈 Only return the actual blogs, not metadata
-                'total'        => $blogs->total(),       // Optional: total number of blogs
+                'total_blogs'        => $blogs->total(),       // Optional: total number of blogs
+                'total_pages' => $blogs->lastPage(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
