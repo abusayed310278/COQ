@@ -98,8 +98,63 @@ class PackageOrderController extends Controller
     //     ]);
     // }
 
+    // public function allShow(Request $request)
+    // {
+    //     if (!Auth::check()) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Please log in to view orders.',
+    //         ], 401);
+    //     }
+
+    //     $query = PackageOrder::query();
+
+    //     // Filter by package_name
+    //     if ($request->filled('package_name')) {
+    //         $query->where('package_name', 'like', '%' . $request->package_name . '%');
+    //     }
+
+    //     // Filter by created_at date (format: YYYY-MM-DD)
+    //     if ($request->filled('date')) {
+    //         $query->whereDate('created_at', $request->date);
+    //     }
+
+    //     // Generic search: matches package_name, email, or company_name
+    //     if ($request->filled('search')) {
+    //         $search = $request->search;
+    //         $query->where(function ($q) use ($search) {
+    //             $q->where('package_name', 'like', "%$search%")
+    //                 ->orWhere('email', 'like', "%$search%")
+    //                 ->orWhere('company_name', 'like', "%$search%");
+    //         });
+    //     }
+
+    //     // Get latest 10 filtered results
+    //     $orders = $query->latest()
+    //         ->take(10)
+    //         ->get(['package_name', 'email', 'company_name', 'location','phone', 'created_at']);
+
+    //     // Transform dates
+    //     $orders->transform(function ($order) {
+    //         return [
+    //             'package_name' => $order->package_name,
+    //             'company_name' => $order->company_name,
+    //             'email'        => $order->email,
+    //             'location'     => $order->location,
+    //             'phone' => $order->phone,
+    //             'created_at'   => $order->created_at->format('d/m/Y'),
+    //         ];
+    //     });
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'orders'  => $orders,
+    //     ]);
+    // }
+
     public function allShow(Request $request)
-    {
+{
+    try {
         if (!Auth::check()) {
             return response()->json([
                 'success' => false,
@@ -124,33 +179,44 @@ class PackageOrderController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('package_name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('company_name', 'like', "%$search%");
+                  ->orWhere('email', 'like', "%$search%")
+                  ->orWhere('company_name', 'like', "%$search%");
             });
         }
 
-        // Get latest 10 filtered results
+        // Paginate 8 per page and get latest results
         $orders = $query->latest()
-            ->take(10)
-            ->get(['package_name', 'email', 'company_name', 'location','phone', 'created_at']);
+            ->paginate(8, ['package_name', 'email', 'company_name', 'location', 'phone', 'created_at']);
 
-        // Transform dates
-        $orders->transform(function ($order) {
+        // Format the data collection
+        $formattedOrders = $orders->getCollection()->transform(function ($order) {
             return [
                 'package_name' => $order->package_name,
                 'company_name' => $order->company_name,
                 'email'        => $order->email,
                 'location'     => $order->location,
-                'phone' => $order->phone,
+                'phone'        => $order->phone,
                 'created_at'   => $order->created_at->format('d/m/Y'),
             ];
         });
 
         return response()->json([
-            'success' => true,
-            'orders'  => $orders,
+            'success'      => true,
+            'current_page' => $orders->currentPage(),
+            'per_page'     => $orders->perPage(),
+            'data'         => $formattedOrders,
+            'total_blogs'  => $orders->total(),
+            'total_pages'  => $orders->lastPage(),
         ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to retrieve orders.',
+            'error'   => $e->getMessage(),
+        ], 500);
     }
+}
+
 
 
 
