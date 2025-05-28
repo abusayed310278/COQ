@@ -13,7 +13,7 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         try {
-             return $request->publish;
+             return gettype($request->publish) ;
             $blogs = Blog::when($request->search, function ($query, $search) {
                 return $query->where('title', 'like', "%{$search}%");
             })
