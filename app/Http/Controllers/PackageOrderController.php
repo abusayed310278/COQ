@@ -51,59 +51,55 @@ class PackageOrderController extends Controller
 
 
 
-    // public function index()
-    // {
-    //     $data = PackageOrder::select('id','package_name', 'email','status', 'created_at')
-    //         // ->where('status', false) // optional: uncomment if needed
-    //         ->orderBy('created_at', 'desc') // ensures latest by created_at
-    //         ->get();
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'data'    => $data
-    //     ]);
-    // }
-
-    public function index(Request $request)
+    public function index()
     {
-        $query = PackageOrder::select('id', 'package_name', 'email', 'status', 'created_at')
-            ->orderBy('created_at', 'desc');
-
-        // Search by package_name
-        if ($request->has('package_name') && !empty($request->package_name)) {
-            $query->where('package_name', 'like', '%' . $request->package_name . '%');
-        }
-
-        // Search by date (assuming format: YYYY-MM-DD)
-        if ($request->has('date') && !empty($request->date)) {
-            $query->whereDate('created_at', $request->date);
-        }
-
-        // Generic search across multiple fields
-        if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('package_name', 'like', "%$searchTerm%")
-                    ->orWhere('email', 'like', "%$searchTerm%");
-            });
-        }
-
-        $data = $query->get();
+        $data = PackageOrder::select('id', 'package_name', 'email', 'status', 'created_at')
+            // ->where('status', false) // optional: uncomment if needed
+            ->orderBy('created_at', 'desc') // ensures latest by created_at
+            ->get();
 
         return response()->json([
             'success' => true,
-            'data'    => $data,
+            'data'    => $data
         ]);
     }
 
 
 
+    // public function allShow()
+    // {
 
-    public function allShow()
+    //     // return 'ok';
+
+    //     if (!Auth::check()) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Please log in to view orders.',
+    //         ], 401);
+    //     }
+
+    //     $orders = PackageOrder::latest()
+    //         ->take(10)
+    //         ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
+
+    //     $orders->transform(function ($order) {
+    //         return [
+    //             'package_name' => $order->package_name,
+    //             'company_name' => $order->company_name,
+    //             'email'        => $order->email,
+    //             'location'     => $order->location,
+    //             'created_at'   => $order->created_at->format('d/m/Y'),
+    //         ];
+    //     });
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'orders' => $orders,
+    //     ]);
+    // }
+
+    public function allShow(Request $request)
     {
-
-        // return 'ok';
-
         if (!Auth::check()) {
             return response()->json([
                 'success' => false,
@@ -111,10 +107,34 @@ class PackageOrderController extends Controller
             ], 401);
         }
 
-        $orders = PackageOrder::latest()
+        $query = PackageOrder::query();
+
+        // Filter by package_name
+        if ($request->filled('package_name')) {
+            $query->where('package_name', 'like', '%' . $request->package_name . '%');
+        }
+
+        // Filter by created_at date (format: YYYY-MM-DD)
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // Generic search: matches package_name, email, or company_name
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('package_name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhere('company_name', 'like', "%$search%");
+            });
+        }
+
+        // Get latest 10 filtered results
+        $orders = $query->latest()
             ->take(10)
             ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
 
+        // Transform dates
         $orders->transform(function ($order) {
             return [
                 'package_name' => $order->package_name,
@@ -127,9 +147,10 @@ class PackageOrderController extends Controller
 
         return response()->json([
             'success' => true,
-            'orders' => $orders,
+            'orders'  => $orders,
         ]);
     }
+
 
 
 
