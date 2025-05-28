@@ -51,18 +51,51 @@ class PackageOrderController extends Controller
 
 
 
-    public function index()
+    // public function index()
+    // {
+    //     $data = PackageOrder::select('id','package_name', 'email','status', 'created_at')
+    //         // ->where('status', false) // optional: uncomment if needed
+    //         ->orderBy('created_at', 'desc') // ensures latest by created_at
+    //         ->get();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'data'    => $data
+    //     ]);
+    // }
+
+    public function index(Request $request)
     {
-        $data = PackageOrder::select('id','package_name', 'email','status', 'created_at')
-            // ->where('status', false) // optional: uncomment if needed
-            ->orderBy('created_at', 'desc') // ensures latest by created_at
-            ->get();
+        $query = PackageOrder::select('id', 'package_name', 'email', 'status', 'created_at')
+            ->orderBy('created_at', 'desc');
+
+        // Search by package_name
+        if ($request->has('package_name') && !empty($request->package_name)) {
+            $query->where('package_name', 'like', '%' . $request->package_name . '%');
+        }
+
+        // Search by date (assuming format: YYYY-MM-DD)
+        if ($request->has('date') && !empty($request->date)) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // Generic search across multiple fields
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('package_name', 'like', "%$searchTerm%")
+                    ->orWhere('email', 'like', "%$searchTerm%");
+            });
+        }
+
+        $data = $query->get();
 
         return response()->json([
             'success' => true,
-            'data'    => $data
+            'data'    => $data,
         ]);
     }
+
 
 
 
