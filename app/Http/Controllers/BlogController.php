@@ -13,17 +13,29 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         try {
-             return gettype($request->publish) ;
+            //  return gettype($request->publish) ;
+            if ($request->publish == "all") {
+                $blogs = Blog::latest()->paginate(8); // latest() comes BEFORE paginate()
+
+                return response()->json([
+                    'success'       => true,
+                    'current_page'  => $blogs->currentPage(),
+                    'per_page'      => $blogs->perPage(),
+                    'data'          => $blogs->items(),
+                    'total_blogs'   => $blogs->total(),
+                    'total_pages'   => $blogs->lastPage(),
+                ]);
+            }
             $blogs = Blog::when($request->search, function ($query, $search) {
                 return $query->where('title', 'like', "%{$search}%");
             })
-           
-             ->when($request->publish !== null, function ($query) use ($request) {
-                    return $query->where('publish',(bool) $request->publish); // expects true/false or 1/0
+
+                ->when($request->publish !== null, function ($query) use ($request) {
+                    return $query->where('publish', (bool) $request->publish); // expects true/false or 1/0
                 })
 
                 ->when($request->publish !== null, function ($query) use ($request) {
-                    return $query->where('publish',(bool) $request->publish); // expects true/false or 1/0
+                    return $query->where('publish', (bool) $request->publish); // expects true/false or 1/0
                 })
                 ->when($request->date, function ($query, $date) {
                     return $query->whereDate('created_at', $date); // expects Y-m-d
@@ -49,7 +61,7 @@ class BlogController extends Controller
         }
     }
 
-    
+
 
 
 
