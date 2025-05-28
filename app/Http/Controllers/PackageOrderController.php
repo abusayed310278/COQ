@@ -132,7 +132,7 @@ class PackageOrderController extends Controller
         // Get latest 10 filtered results
         $orders = $query->latest()
             ->take(10)
-            ->get(['package_name', 'email', 'company_name', 'location', 'created_at']);
+            ->get(['package_name', 'email', 'company_name', 'location','phone', 'created_at']);
 
         // Transform dates
         $orders->transform(function ($order) {
