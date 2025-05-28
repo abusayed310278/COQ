@@ -17,7 +17,7 @@ class BlogController extends Controller
                 return $query->where('title', 'like', "%{$search}%");
             })
                 ->when($request->publish !== null, function ($query) use ($request) {
-                    return $query->where('publish',(bool) $request->status); // expects true/false or 1/0
+                    return $query->where('publish',(bool) $request->publish); // expects true/false or 1/0
                 })
                 ->when($request->date, function ($query, $date) {
                     return $query->whereDate('created_at', $date); // expects Y-m-d
