@@ -10,77 +10,36 @@ class BlogController extends Controller
 {
 
 
-    // public function index(Request $request)
-    // {
-    //     try {
-    //         $blogs = Blog::when($request->search, function ($query, $search) {
-    //             return $query->where('title', 'like', "%{$search}%");
-    //         })
-    //             ->when($request->publish !== null, function ($query) use ($request) {
-    //                 return $query->where('publish',(bool) $request->publish); // expects true/false or 1/0
-    //             })
-    //             ->when($request->date, function ($query, $date) {
-    //                 return $query->whereDate('created_at', $date); // expects Y-m-d
-    //             })
-    //             ->latest()
-    //             ->paginate(8);
-
-
-
-    //         return response()->json([
-    //             'success'      => true,
-    //             'current_page' => $blogs->currentPage(), // ✅ current page number
-    //             'per_page'     => $blogs->perPage(),     // ✅ blogs per page (should be 8)
-    //             'data'         => $blogs->items(),       // 👈 Only return the actual blogs, not metadata
-    //             'total_blogs'        => $blogs->total(),       // Optional: total number of blogs
-    //             'total_pages' => $blogs->lastPage(),
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Failed to fetch blogs',
-    //         ], 500);
-    //     }
-    // }
-
     public function index(Request $request)
     {
         try {
-            $blogsQuery = Blog::when($request->search, function ($query, $search) {
+             return $request->publish;
+            $blogs = Blog::when($request->search, function ($query, $search) {
                 return $query->where('title', 'like', "%{$search}%");
             })
+           
+             ->when($request->publish !== null, function ($query) use ($request) {
+                    return $query->where('publish',(bool) $request->publish); // expects true/false or 1/0
+                })
+
                 ->when($request->publish !== null, function ($query) use ($request) {
-                    return $query->where('publish', (bool) $request->publish);
+                    return $query->where('publish',(bool) $request->publish); // expects true/false or 1/0
                 })
                 ->when($request->date, function ($query, $date) {
-                    return $query->whereDate('created_at', $date);
+                    return $query->whereDate('created_at', $date); // expects Y-m-d
                 })
-                ->latest();
+                ->latest()
+                ->paginate(8);
 
-            // ✅ Fetch all blogs if ?all=true
-            if ($request->boolean('all')) {
-                $blogs = $blogsQuery->get();
 
-                return response()->json([
-                    'success'      => true,
-                    'current_page' => 1,
-                    'per_page'     => $blogs->count(),
-                    'data'         => $blogs,
-                    'total_blogs'  => $blogs->count(),
-                    'total_pages'  => 1,
-                ]);
-            }
-
-            // ✅ Paginate if ?all is not set or false
-            $blogs = $blogsQuery->paginate(8);
 
             return response()->json([
                 'success'      => true,
-                'current_page' => $blogs->currentPage(),
-                'per_page'     => $blogs->perPage(),
-                'data'         => $blogs->items(),
-                'total_blogs'  => $blogs->total(),
-                'total_pages'  => $blogs->lastPage(),
+                'current_page' => $blogs->currentPage(), // ✅ current page number
+                'per_page'     => $blogs->perPage(),     // ✅ blogs per page (should be 8)
+                'data'         => $blogs->items(),       // 👈 Only return the actual blogs, not metadata
+                'total_blogs'        => $blogs->total(),       // Optional: total number of blogs
+                'total_pages' => $blogs->lastPage(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -89,6 +48,8 @@ class BlogController extends Controller
             ], 500);
         }
     }
+
+    
 
 
 
