@@ -141,7 +141,7 @@ class PackageOrderController extends Controller
                 'company_name' => $order->company_name,
                 'email'        => $order->email,
                 'location'     => $order->location,
-                'phone'=> $order->phone,
+                'phone' => $order->phone,
                 'created_at'   => $order->created_at->format('d/m/Y'),
             ];
         });
