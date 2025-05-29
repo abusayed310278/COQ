@@ -63,6 +63,68 @@ class BlogController extends Controller
     //     }
     // }
 
+    // public function index(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'publish' => 'nullable|string|in:all,true,false,0,1',
+    //         'search' => 'nullable|string|max:255',
+    //         'date' => 'nullable|date_format:Y-m-d',
+    //         'paginate_count' => 'nullable|integer|min:1',
+    //     ]);
+
+    //     $publish = $validated['publish'] ?? null;
+    //     $search = $validated['search'] ?? null;
+    //     $date = $validated['date'] ?? null;
+    //     $paginate_count = $validated['paginate_count'] ?? 8;
+
+    //     try {
+    //         $blogQuery = Blog::query();
+
+    //         if ($publish === 'all') {
+    //             $blogs = $blogQuery->latest()->paginate($paginate_count);
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'current_page' => $blogs->currentPage(),
+    //                 'per_page' => $blogs->perPage(),
+    //                 'data' => $blogs->items(),
+    //                 'total_blogs' => $blogs->total(),
+    //                 'total_pages' => $blogs->lastPage(),
+    //                 'message' => 'Blogs retrieved successfully',
+    //             ]);
+    //         }
+
+    //         if ($search) {
+    //             $blogQuery->where('title', 'like', "%{$search}%");
+    //         }
+
+    //         if ($publish !== null && $publish !== 'all') {
+    //             $blogQuery->where('publish', filter_var($publish, FILTER_VALIDATE_BOOLEAN));
+    //         }
+
+    //         if ($date) {
+    //             $blogQuery->whereDate('created_at', $date);
+    //         }
+
+    //         $blogs = $blogQuery->latest()->paginate($paginate_count);
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'current_page' => $blogs->currentPage(),
+    //             'per_page' => $blogs->perPage(),
+    //             'data' => $blogs->items(),
+    //             'total_blogs' => $blogs->total(),
+    //             'total_pages' => $blogs->lastPage(),
+    //             'message' => 'Blogs retrieved successfully',
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error fetching blogs: ' . $e->getMessage());
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Something went wrong, please try again later.',
+    //         ], 500);
+    //     }
+    // }
     public function index(Request $request)
     {
         $validated = $request->validate([
@@ -80,32 +142,22 @@ class BlogController extends Controller
         try {
             $blogQuery = Blog::query();
 
-            if ($publish === 'all') {
-                $blogs = $blogQuery->latest()->paginate($paginate_count);
-
-                return response()->json([
-                    'success' => true,
-                    'current_page' => $blogs->currentPage(),
-                    'per_page' => $blogs->perPage(),
-                    'data' => $blogs->items(),
-                    'total_blogs' => $blogs->total(),
-                    'total_pages' => $blogs->lastPage(),
-                    'message' => 'Blogs retrieved successfully',
-                ]);
-            }
-
+            // Apply search filter
             if ($search) {
                 $blogQuery->where('title', 'like', "%{$search}%");
             }
 
+            // Apply publish filter only if not 'all'
             if ($publish !== null && $publish !== 'all') {
                 $blogQuery->where('publish', filter_var($publish, FILTER_VALIDATE_BOOLEAN));
             }
 
+            // Apply date filter
             if ($date) {
                 $blogQuery->whereDate('created_at', $date);
             }
 
+            // Paginate and return
             $blogs = $blogQuery->latest()->paginate($paginate_count);
 
             return response()->json([
