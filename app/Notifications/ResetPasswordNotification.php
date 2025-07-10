@@ -35,11 +35,13 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // $ur = env('APP_FRONTEND_URL').'/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
+        // $ur = 'env('APP_FRONTEND_URL')'.'/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
             // $url ='http://localhost:3000' . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
         // $url = str_replace('http://', 'http://', $url);
+        // $ur = env('APP_FRONTEND_URL') . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
 
-        $url = 'http://localhost:3000/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
+
+        $url = 'https://cqdcleaningservices.com/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
 
         return (new MailMessage)
                     ->line('Now You Can Reset Your Password.')
