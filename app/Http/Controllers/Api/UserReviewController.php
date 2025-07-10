@@ -134,12 +134,32 @@ class UserReviewController extends Controller
         }
     }
 
+    /** Display the specified resource. */
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        try {
+            $review = UserReview::findOrFail($id);
+
+            // Ensure full URL for profile photo
+            if ($review->profile_photo_url && !str_starts_with($review->profile_photo_url, 'http')) {
+                $review->profile_photo_url = url('uploads/reviews/' . $review->profile_photo_url);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $review,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Review not found.',
+                'error' => $e->getMessage(),
+            ], 404);
+        }
     }
 
     /**
