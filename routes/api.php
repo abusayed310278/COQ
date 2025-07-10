@@ -101,6 +101,8 @@ Route::middleware('auth:api')->group(function () {
 Route::get('/email', [AuthController::class, 'sendEmail']);
 
 
+
+
 //blogs (backend) which is namely blogs
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('blogs', BlogController::class);
@@ -116,6 +118,8 @@ Route::middleware('auth:api')->group(function () {
 
 
 Route::get('/google-reviews', [GoogleReviewController::class, 'getGoogleReviews']);
+
+
 
 
 
