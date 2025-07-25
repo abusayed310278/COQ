@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\UserReviewController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CleaningServiceController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\GoogleReviewController;
 use App\Http\Controllers\PackageController;
@@ -44,6 +46,8 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // package info bronze(backend) which is namely packages
 Route::middleware('auth:api')->group(function () {
     Route::post('/packageinfo/bronze', [PackageController::class, 'storeOrUpdateBronze']);
+    Route::apiResource('categories', CategoryController::class)->except('index','show');
+    Route::apiResource('cleaning-services', CleaningServiceController::class)->except('index','show');
 });
 
 Route::get('/packageinfo/bronze', [PackageController::class, 'BronzeShow']);
@@ -106,5 +110,15 @@ Route::apiResource('user-reviews', UserReviewController::class)
     ->middleware('auth:api');
 
 Route::get('/google-reviews', [GoogleReviewController::class, 'getGoogleReviews']);
+
+
+Route::get('categories', [CategoryController::class,'index']);
+Route::get('categories/{id}', [CategoryController::class,'show']);
+
+Route::get('categories', [CategoryController::class,'index']);
+Route::get('categories/{id}', [CategoryController::class,'show']);
+
+Route::get('cleaning-services',[CleaningServiceController::class,'index']);
+Route::get('cleaning-services/{id}',[CleaningServiceController::class,'show']);
 
 /* create by abu sayed (end) */
