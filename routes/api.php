@@ -108,6 +108,8 @@ Route::middleware('auth:api')->group(function () {
 
 // Route::apiResource('user-reviews', UserReviewController::class);
 
+
+
 // Public route: index (listing reviews)
 Route::get('user-reviews', [UserReviewController::class, 'index']);
 
