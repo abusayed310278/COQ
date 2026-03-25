@@ -106,6 +106,8 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/blogsupdate/{id}', [BlogController::class, 'updates']);
 });
 
+
+
 // Route::apiResource('user-reviews', UserReviewController::class);
 
 // Public route: index (listing reviews)
