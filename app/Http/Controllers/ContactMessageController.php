@@ -1,5 +1,80 @@
 <?php
 
+// namespace App\Http\Controllers;
+
+// use Illuminate\Http\Request;
+// use App\Models\ContactMessage;
+// use Illuminate\Support\Facades\Log;
+// use Exception;
+// use App\Mail\ContactMessageMail;
+// use Illuminate\Support\Facades\Mail;
+
+// class ContactMessageController extends Controller
+// {
+//     // Show the first contact message
+//     public function show()
+//     {
+//         try {
+//             $msg = ContactMessage::first();
+
+//             if ($msg) {
+//                 return response()->json([
+//                     'success' => true,
+//                     'message' => 'Contact message fetched successfully.',
+//                     'data' => $msg
+//                 ]);
+//             } else {
+//                 return response()->json([
+//                     'success' => false,
+//                     'message' => 'No contact message found.'
+//                 ], 404);
+//             }
+//         } catch (Exception $e) {
+//             Log::error('Error fetching contact message: ' . $e->getMessage());
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'Failed to retrieve contact message.'
+//             ], 500);
+//         }
+//     }
+
+//     // Store a new contact message
+//     public function store(Request $request)
+//     {
+//         try {
+//             $validated = $request->validate([
+//                 'first_name'   => 'required|string|max:255',
+//                 'last_name'    => 'required|string|max:255',
+//                 // 'email'        => 'required|email|phone:*',
+//                 'email'        => 'required|email',
+//                 'phone'        => 'required|string|max:20',
+//                 'organization' => 'nullable|string|max:255',
+//                 'city'         => 'nullable|string|max:255',
+//                 'help'         => 'nullable|string',
+//             ]);
+
+//             $contact = ContactMessage::create($validated);
+
+//             // Send email to admin
+//             Mail::to('abubdcalling@gmail.com')->send(new ContactMessageMail($contact));
+
+//             return response()->json([
+//                 'success' => true,
+//                 'message' => 'Message sent successfully.',
+//                 'last_inserted_id' => $contact->id,
+//                 'data' => $contact
+//             ], 201);
+//         } catch (Exception $e) {
+//             Log::error('Error saving contact message: ' . $e->getMessage());
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'Failed to save contact message.',
+//                 'error' => $e->getMessage()
+//             ], 500);
+//         }
+//     }
+// }
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -11,6 +86,26 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactMessageController extends Controller
 {
+    // Get all contact messages
+    public function index()
+    {
+        try {
+            $messages = ContactMessage::latest()->paginate(10);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Contact messages fetched successfully.',
+                'data'    => $messages
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error fetching contact messages: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve contact messages.'
+            ], 500);
+        }
+    }
+
     // Show the first contact message
     public function show()
     {
@@ -21,12 +116,39 @@ class ContactMessageController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Contact message fetched successfully.',
-                    'data' => $msg
+                    'data'    => $msg
                 ]);
             } else {
                 return response()->json([
                     'success' => false,
                     'message' => 'No contact message found.'
+                ], 404);
+            }
+        } catch (Exception $e) {
+            Log::error('Error fetching contact message: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve contact message.'
+            ], 500);
+        }
+    }
+
+    // View a single contact message by ID
+    public function showById($id)
+    {
+        try {
+            $msg = ContactMessage::find($id);
+
+            if ($msg) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Contact message fetched successfully.',
+                    'data'    => $msg
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Contact message not found.'
                 ], 404);
             }
         } catch (Exception $e) {
@@ -45,7 +167,6 @@ class ContactMessageController extends Controller
             $validated = $request->validate([
                 'first_name'   => 'required|string|max:255',
                 'last_name'    => 'required|string|max:255',
-                // 'email'        => 'required|email|phone:*',
                 'email'        => 'required|email',
                 'phone'        => 'required|string|max:20',
                 'organization' => 'nullable|string|max:255',
@@ -56,20 +177,48 @@ class ContactMessageController extends Controller
             $contact = ContactMessage::create($validated);
 
             // Send email to admin
-            Mail::to('abubdcalling@gmail.com')->send(new ContactMessageMail($contact));
+            // Mail::to('abubdcalling@gmail.com')->send(new ContactMessageMail($contact));
 
             return response()->json([
-                'success' => true,
-                'message' => 'Message sent successfully.',
+                'success'          => true,
+                'message'          => 'Message sent successfully.',
                 'last_inserted_id' => $contact->id,
-                'data' => $contact
+                'data'             => $contact
             ], 201);
         } catch (Exception $e) {
             Log::error('Error saving contact message: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to save contact message.',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Delete a contact message by ID
+    public function destroy($id)
+    {
+        try {
+            $msg = ContactMessage::find($id);
+
+            if (!$msg) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Contact message not found.'
+                ], 404);
+            }
+
+            $msg->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Contact message deleted successfully.'
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error deleting contact message: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete contact message.'
             ], 500);
         }
     }

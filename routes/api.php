@@ -74,7 +74,14 @@ Route::get('/notification', [PackageOrderController::class, 'index'])->middlewar
 Route::put('/notification', [PackageOrderController::class, 'update'])->middleware('auth:api');
 
 // contact message get from frontend
-Route::post('/contactMessage', [ContactMessageController::class, 'store']);
+// Route::post('/contactMessage', [ContactMessageController::class, 'store']);
+Route::prefix('contact-messages')->group(function () {
+    Route::get('/',        [ContactMessageController::class, 'index']);      
+    Route::post('/',       [ContactMessageController::class, 'store']);      
+    Route::get('/first',   [ContactMessageController::class, 'show']);       
+    Route::get('/{id}',    [ContactMessageController::class, 'showById']);   
+    Route::delete('/{id}', [ContactMessageController::class, 'destroy']);   
+});
 
 // packages(backend) which is namely Booking
 Route::middleware('auth:api')->group(function () {
